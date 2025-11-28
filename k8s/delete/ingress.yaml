@@ -1,0 +1,24 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: todo-delete-tasks-api-ingress
+  namespace: delete-todo
+  annotations:
+    cert-manager.io/cluster-issuer: "letsencrypt-production"
+spec:
+  ingressClassName: nginx
+  tls:
+    - hosts:
+        - delete.digwi.online
+      secretName: delete-digwi-tls
+  rules:
+    - host: delete.digwi.online
+      http:
+        paths:
+          - pathType: Prefix
+            path: "/"
+            backend:
+              service:
+                name: todo-delete-tasks-api
+                port:
+                  number: 80

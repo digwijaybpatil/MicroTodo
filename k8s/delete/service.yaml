@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: todo-delete-tasks-api
+  namespace: delete-todo
+spec:
+  selector:
+    app: todo-delete-tasks-api
+  ports:
+    - port: 80
+      targetPort: 8000

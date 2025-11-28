@@ -1,0 +1,89 @@
+name: Terraform Deploy - Prod
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  plan:
+    name: "Plan"
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Azure Login
+        uses: azure/login@v1
+        with:
+          auth-type: service_principal
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v2
+
+      - name: Terraform Init
+        run: |
+          terraform init \
+            -backend-config="resource_group_name=${{ secrets.TF_RESOURCE_GROUP }}" \
+            -backend-config="storage_account_name=${{ secrets.TF_STORAGE_ACCOUNT_NAME }}" \
+            -backend-config="container_name=${{ secrets.TF_CONTAINER_NAME }}" \
+            -backend-config="key=${{ secrets.TF_STATE_KEY_PROD }}" \
+            -input=false
+
+      - name: Terraform Plan (binary)
+        run: |
+          terraform plan \
+            -input=false \
+            -no-color \
+            -var-file="environments/prod/prod.tfvars" \
+            -out=tfplan.binary
+
+      - name: Generate human-readable plan
+        run: terraform show -no-color tfplan.binary > tfplan.txt
+
+      - name: Upload plan (binary + text)
+        uses: actions/upload-artifact@v4
+        with:
+          name: tfplan
+          path: |
+            tfplan.binary
+            tfplan.txt
+
+  apply:
+    name: "Apply (requires prod approval)"
+    needs: plan
+    runs-on: ubuntu-latest
+    environment: prod # approval required
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Azure Login
+        uses: azure/login@v1
+        with:
+          auth-type: service_principal
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v2
+
+      - name: Terraform Init
+        run: |
+          terraform init \
+            -backend-config="resource_group_name=${{ secrets.TF_RESOURCE_GROUP }}" \
+            -backend-config="storage_account_name=${{ secrets.TF_STORAGE_ACCOUNT_NAME }}" \
+            -backend-config="container_name=${{ secrets.TF_CONTAINER_NAME }}" \
+            -backend-config="key=${{ secrets.TF_STATE_KEY_PROD }}" \
+            -input=false
+
+      - name: Download plan
+        uses: actions/download-artifact@v4
+        with:
+          name: tfplan
+
+      - name: Terraform Apply
+        run: terraform apply -input=false tfplan.binary

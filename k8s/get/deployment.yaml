@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: todo-get-task-api
+  namespace: get-todo
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: todo-get-task-api
+  template:
+    metadata:
+      labels:
+        app: todo-get-task-api
+    spec:
+      containers:
+        - name: todo-get-task-api
+          image: acrdigwimicrotodoappdev.azurecr.io/todo-get-task-api:v1
+          ports:
+            - containerPort: 8000
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8000
+            initialDelaySeconds: 5
+            periodSeconds: 10

@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: todo-add-tasks-api
+  namespace: add-todo
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: todo-add-tasks-api
+  template:
+    metadata:
+      labels:
+        app: todo-add-tasks-api
+    spec:
+      containers:
+        - name: todo-add-tasks-api
+          image: acrdigwimicrotodoappdev.azurecr.io/todo-add-tasks-api:v1
+          ports:
+            - containerPort: 8000
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8000
+            initialDelaySeconds: 5
+            periodSeconds: 10

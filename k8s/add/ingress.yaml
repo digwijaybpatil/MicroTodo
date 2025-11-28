@@ -1,0 +1,24 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: todo-add-tasks-api-ingress
+  namespace: add-todo
+  annotations:
+    cert-manager.io/cluster-issuer: "letsencrypt-production"
+spec:
+  ingressClassName: nginx
+  tls:
+    - hosts:
+        - add.digwi.online
+      secretName: add-digwi-tls
+  rules:
+    - host: add.digwi.online
+      http:
+        paths:
+          - pathType: Prefix
+            path: "/"
+            backend:
+              service:
+                name: todo-add-tasks-api
+                port:
+                  number: 80

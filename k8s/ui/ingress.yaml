@@ -1,0 +1,24 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: todo-ui-ingress
+  namespace: ui-todo
+  annotations:
+    cert-manager.io/cluster-issuer: "letsencrypt-production"
+spec:
+  ingressClassName: nginx
+  tls:
+    - hosts:
+        - ui.digwi.online
+      secretName: ui-digwi-tls
+  rules:
+    - host: ui.digwi.online
+      http:
+        paths:
+          - pathType: Prefix
+            path: "/"
+            backend:
+              service:
+                name: todo-ui
+                port:
+                  number: 80

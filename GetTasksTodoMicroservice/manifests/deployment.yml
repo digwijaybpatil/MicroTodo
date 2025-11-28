@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: todo-get-task-api
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: todo-get-task-api
+  template:
+    metadata:
+      labels:
+        app: todo-get-task-api
+    spec:
+      containers:
+        - name: todo-get-task-api
+          image: acrdigwimicrotodoappdev.azurecr.io/todo-get-tasks-api:v1
+          ports:
+            - containerPort: 8000
+          env:
+            - name: CONNECTION_STRING
+              value: "Driver={ODBC Driver 18 for SQL Server};Server=tcp:sqlserverdigwimicrotodoappdev.database.windows.net,1433;Database=sqldb-digwimicrotodoapp-dev;Uid=sqladminuser;Pwd=Abcd1234!;Encrypt=yes;TrustServerCertificate=no;Connection Timeout=30;"

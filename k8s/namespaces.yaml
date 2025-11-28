@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: ui-todo
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: add-todo
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: get-todo
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: delete-todo
