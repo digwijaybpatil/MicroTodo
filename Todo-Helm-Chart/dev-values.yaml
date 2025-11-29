@@ -1,0 +1,49 @@
+common:
+  containerRegistryURL: acrdigwimicrotodoappdev.azurecr.io
+  ingressClass: azure-application-gateway
+
+ui:
+  replicas: 2
+  image:
+    name: todo-ui
+    tag: v4
+  port: 80
+  ServicePort: 80
+  ingress:
+    host: dev-ui.digwi.online
+
+getTask:
+  replicas: 2
+  image:
+    name: todo-get-tasks-api
+    tag: v1
+  port: 8000
+  ServicePort: 80
+  connectionString: "Driver={ODBC Driver 18 for SQL Server};Server=tcp:sqlserverdigwimicrotodoappdev.database.windows.net,1433;Database=sqldb-digwimicrotodoapp-dev;Uid=sqladminuser;Pwd=Abcd1234!;Encrypt=yes;TrustServerCertificate=no;Connection Timeout=30;"
+  ingress:
+    host: dev-get.digwi.online
+    ingressClass: azure-application-gateway
+
+deleteTask:
+  replicas: 2
+  image:
+    name: todo-delete-tasks-api
+    tag: v1
+  port: 8000
+  ServicePort: 80
+  connectionString: "Driver={ODBC Driver 18 for SQL Server};Server=tcp:sqlserverdigwimicrotodoappdev.database.windows.net,1433;Database=sqldb-digwimicrotodoapp-dev;Uid=sqladminuser;Pwd=Abcd1234!;Encrypt=yes;TrustServerCertificate=no;Connection Timeout=30;"
+  ingress:
+    host: dev-delete.digwi.online
+    ingressClass: azure-application-gateway
+
+addTask:
+  replicas: 2
+  image:
+    name: todo-add-tasks-api
+    tag: v1
+  port: 8000
+  ServicePort: 80
+  connectionString: "Driver={ODBC Driver 18 for SQL Server};Server=tcp:sqlserverdigwimicrotodoappdev.database.windows.net,1433;Database=sqldb-digwimicrotodoapp-dev;Uid=sqladminuser;Pwd=Abcd1234!;Encrypt=yes;TrustServerCertificate=no;Connection Timeout=30;"
+  ingress:
+    host: dev-add.digwi.online
+    ingressClass: azure-application-gateway
